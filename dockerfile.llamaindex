@@ -1,4 +1,23 @@
-FROM continuumio/miniconda3
+FROM ubuntu:24.04
+
+# 更新套件清單並安裝必要的工具
+RUN apt-get update && \
+    apt-get install -y \
+    wget \
+    bzip2 \
+    ca-certificates \
+    curl \
+    git \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 下載並安裝 Miniconda
+RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
+
+# 設定環境變數
+ENV PATH /opt/conda/bin:$PATH
 
 # 初始化 Conda
 RUN conda init
