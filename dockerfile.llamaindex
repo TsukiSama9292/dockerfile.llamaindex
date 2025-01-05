@@ -8,6 +8,7 @@ RUN apt-get update && \
     ca-certificates \
     curl \
     git \
+    mysql-client \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -31,9 +32,16 @@ RUN conda create -n llamaindex python=3.10 -y
 # 設定環境變數，使 llamaindex 成為預設環境
 ENV PATH /opt/conda/envs/llamaindex/bin:$PATH
 
-# 安裝依賴
+# 安裝 llama-index 依賴
 RUN pip install llama-index && \
     pip install llama-index-llms-ollama && \
     pip install llama-index-embeddings-huggingface
+
+# 安裝 FastAPI 依賴
+RUN pip install fastapi fastapi[all] && \
+    pip install uvicorn gunicorn && \
+    pip install pydantic && \
+    pip install mysqlclient sqlalchemy databases alembic && \
+    pip install pytest pytest-asyncio
 
 RUN mkdir /app
