@@ -12,6 +12,7 @@ RUN apt-get update && \
     libmysqlclient-dev \
     python3-dev \
     mysql-client \
+    pkg-config \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -42,6 +43,24 @@ RUN pip install llama-index && \
 
 # 安裝 FastAPI 依賴
 RUN pip install fastapi
+<<<<<<< HEAD
+=======
+
+# 安裝 FastAPI 其他依賴
+RUN pip install "fastapi[all]"
+
+# 安裝其他常用套件
+RUN pip install uvicorn gunicorn pydantic
+
+# 安裝與資料庫相關的套件
+RUN pip install mysqlclient 
+RUN pip install sqlalchemy
+RUN pip install databases
+RUN pip install alembic
+
+# 安裝測試工具
+RUN pip install pytest pytest-asyncio
+>>>>>>> 3b63459 (mysql)
 
 # 安裝 FastAPI 其他依賴
 RUN pip install "fastapi[all]"
