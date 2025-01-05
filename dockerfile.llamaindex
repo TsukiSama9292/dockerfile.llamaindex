@@ -27,14 +27,12 @@ ENV PATH /opt/conda/bin:$PATH
 # 初始化 Conda
 RUN conda init
 
-# 設定 Conda 配置，避免自動進入 base 環境
-RUN conda config --set auto_activate_base false
-
 # 創建新的 Conda 環境
 RUN conda create -n llamaindex python=3.10 -y
 
 # 設定環境變數，使 llamaindex 成為預設環境
 ENV PATH /opt/conda/envs/llamaindex/bin:$PATH
+echo "conda activate llamaindex" >> ~/.bashrc
 
 # 安裝 llama-index 依賴
 RUN pip install llama-index && \
