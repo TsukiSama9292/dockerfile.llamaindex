@@ -10,7 +10,7 @@ RUN apt update && \
 # 防止 Python 寫入 .pyc 文件
 ENV PYTHONDONTWRITEBYTECODE=1
 
-RUN pip install llama-index
+RUN pip install llama-index --break-system-packages
 RUN pip install llama-index-llms-ollama
 RUN pip install llama_index.tools
 RUN pip install llama-index-embeddings-huggingface
