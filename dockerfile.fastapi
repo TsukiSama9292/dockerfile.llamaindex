@@ -39,8 +39,11 @@ RUN pip install llama-index && \
     pip install llama-index-llms-ollama && \
     pip install llama-index-embeddings-huggingface
 
+# 防止 Python 寫入 .pyc 文件
+ENV PYTHONDONTWRITEBYTECODE=1
+    
 # 安裝 FastAPI 依賴
-RUN pip install fastapi "fastapi[all]" async_generator
+RUN pip install fastapi "fastapi[all]"
 
 # 安裝其他常用套件
 RUN pip install uvicorn gunicorn pydantic
