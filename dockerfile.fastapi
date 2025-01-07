@@ -1,5 +1,7 @@
 FROM ubuntu:24.04
 
+###########################################################
+
 # 更新套件清單並安裝必要的工具
 RUN apt-get update && \
     apt-get install -y \
@@ -9,10 +11,7 @@ RUN apt-get update && \
     curl \
     git \
     build-essential \
-    libmysqlclient-dev \
     python3-dev \
-    mysql-client \
-    pkg-config \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -23,35 +22,51 @@ RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-la
 
 # 設定環境變數
 ENV PATH /opt/conda/bin:$PATH
-
 # 初始化 Conda
 RUN conda init
-
 # 創建新的 Conda 環境
-RUN conda create -n llamaindex python=3.10 -y
-
-# 設定環境變數，使 llamaindex 成為預設環境
-ENV PATH /opt/conda/envs/llamaindex/bin:$PATH
-RUN echo "conda activate llamaindex" >> ~/.bashrc
-
-# 安裝 llama-index 依賴
-RUN pip install llama-index && \
-    pip install llama-index-llms-ollama && \
-    pip install llama-index-embeddings-huggingface
-
+RUN conda create -n workspace python=3.10 -y
+# 設定環境變數，使 workspace 成為預設環境
+ENV PATH /opt/conda/envs/workspace/bin:$PATH
+RUN echo "conda activate workspace" >> ~/.bashrc
 # 防止 Python 寫入 .pyc 文件
 ENV PYTHONDONTWRITEBYTECODE=1
-    
-# 安裝 FastAPI 依賴
-RUN pip install fastapi "fastapi[all]"
 
-# 安裝其他常用套件
-RUN pip install uvicorn gunicorn pydantic
-
-# 安裝與資料庫相關的套件
-RUN pip install mysqlclient sqlalchemy databases alembic
-
-# 安裝測試工具
-RUN pip install pytest pytest-asyncio
-
+# 建立應用目錄
 RUN mkdir /app
+
+###########################################################
+
+# 安裝 llama-index 依賴
+RUN pip install 'llama-index==0.12.9' && \
+    pip install 'llama-index-llms-ollama==0.5.0' && \
+    pip install 'llama-index-embeddings-huggingface==0.4.0'
+
+############################################################
+
+# 安裝 FastAPI 依賴
+### 主套件
+RUN pip install 'fastapi==0.115.6'
+### Web 框架
+RUN pip install 'starlette==0.41.3'
+### 數據驗證
+RUN pip install 'pydantic==2.10.4'
+### ASGI + WSGI
+RUN pip install 'uvicorn==0.34.0'
+RUN pip install 'gunicorn==23.0.0'
+### 解析 multipart 表單
+RUN pip install 'python-multipart==0.0.20'
+### 驗證 email 格式
+RUN pip install 'email-validator==2.2.0'
+
+# 安裝資料庫連接套件 , 不需要 mysqlclient
+### 資料庫異步連接
+RUN pip install 'databases==0.9.0'
+### 資料庫遷移
+RUN pip install 'sqlalchemy==2.0.36'  'alembic==1.14.0'
+
+# 測試工具
+### 同步與異步
+RUN pip install 'pytest==8.3.4' 'pytest-asyncio==0.25.1'
+
+############################################################
